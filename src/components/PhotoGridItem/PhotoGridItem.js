@@ -5,7 +5,14 @@ const PhotoGridItem = ({ id, src, alt, tags }) => {
   return (
     <article>
       <Anchor href={`/photos/${id}`}>
-        <Image src={src} />
+      <picture>
+        <Source imagePath={src} extension="avif" />
+        <Source imagePath={src} extension="jpg" />
+        <Image
+          alt={alt}
+          src={`${src}.jpg`}
+        />
+      </picture>
       </Anchor>
       <Tags>
         {tags.map((tag) => (
@@ -15,6 +22,19 @@ const PhotoGridItem = ({ id, src, alt, tags }) => {
     </article>
   );
 };
+
+const Source = ({extension, imagePath}) => {
+  const getSourceSet = (extension) => `
+    ${imagePath}.${extension} 1x,
+    ${imagePath}@2x.${extension} 2x,
+    ${imagePath}@3x.${extension} 3x
+  `
+  
+  return (<source
+    type={`image/${extension}`}
+    srcSet={getSourceSet(extension)}
+  />)
+}
 
 const Anchor = styled.a`
   text-decoration: none;
@@ -28,6 +48,7 @@ const Image = styled.img`
   height: 300px;
   border-radius: 2px;
   margin-bottom: 8px;
+  object-fit: cover;
 `;
 
 const Tags = styled.ul`
